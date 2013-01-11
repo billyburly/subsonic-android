@@ -18,19 +18,13 @@
  */
 package net.sourceforge.subsonic.androidapp.activity;
 
-import java.io.File;
-import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -257,6 +251,21 @@ public class SubsonicTabActivity extends Activity {
             IMAGE_LOADER = new ImageLoader(this);
         }
         return IMAGE_LOADER;
+    }
+
+
+    protected void setBackAction(final Runnable runnable) {
+
+        View backLayout = findViewById(R.id.actionbar_back_layout);
+        backLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runnable.run();
+            }
+        });
+        backLayout.setBackgroundResource(R.drawable.actionbar_button);
+
+        findViewById(R.id.actionbar_back).setVisibility(View.VISIBLE);
     }
 
     protected void downloadRecursively(final String id, final boolean save, final boolean append, final boolean autoplay) {

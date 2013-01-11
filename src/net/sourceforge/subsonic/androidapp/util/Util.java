@@ -41,9 +41,7 @@ import org.apache.http.HttpEntity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -79,7 +77,7 @@ import net.sourceforge.subsonic.androidapp.service.DownloadServiceImpl;
 
 /**
  * @author Sindre Mehus
- * @version $Id: Util.java 3260 2012-10-13 09:38:05Z sindre_mehus $
+ * @version $Id: Util.java 3281 2012-11-02 13:53:54Z sindre_mehus $
  */
 public final class Util {
 
@@ -106,10 +104,6 @@ public final class Util {
     private static Toast toast;
 
     private Util() {
-    }
-
-    public static boolean isOffline(Context context) {
-        return getActiveServer(context) == 0;
     }
 
     public static boolean isScreenLitOnDownload(Context context) {
@@ -144,15 +138,24 @@ public final class Util {
         editor.commit();
     }
 
+    public static boolean isOffline(Context context) {
+        SharedPreferences prefs = getPreferences(context);
+        return prefs.getBoolean(Constants.PREFERENCES_KEY_OFFLINE, false);
+    }
+
+    public static void setOffline(Context context, boolean offline) {
+        SharedPreferences prefs = getPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Constants.PREFERENCES_KEY_OFFLINE, offline);
+        editor.commit();
+    }
+
     public static int getActiveServer(Context context) {
         SharedPreferences prefs = getPreferences(context);
         return prefs.getInt(Constants.PREFERENCES_KEY_SERVER_INSTANCE, 1);
     }
 
     public static String getServerName(Context context, int instance) {
-        if (instance == 0) {
-            return context.getResources().getString(R.string.main_offline);
-        }
         SharedPreferences prefs = getPreferences(context);
         return prefs.getString(Constants.PREFERENCES_KEY_SERVER_NAME + instance, null);
     }
@@ -613,7 +616,7 @@ public final class Util {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                startForeground(downloadService, Constants.NOTIFICATION_ID_PLAYING, notification);
+                downloadService.startForeground(Constants.NOTIFICATION_ID_PLAYING, notification);
             }
         });
 
@@ -627,7 +630,7 @@ public final class Util {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                stopForeground(downloadService, true);
+                downloadService.stopForeground(true);
             }
         });
 
@@ -706,34 +709,6 @@ public final class Util {
             method.invoke(audioManager, componentName);
         } catch (Throwable x) {
             // Ignored.
-        }
-    }
-
-    private static void startForeground(Service service, int notificationId, Notification notification) {
-        // Service.startForeground() was introduced in Android 2.0.
-        // Use reflection to maintain compatibility with 1.5.
-        try {
-            Method method = Service.class.getMethod("startForeground", int.class, Notification.class);
-            method.invoke(service, notificationId, notification);
-            Log.i(TAG, "Successfully invoked Service.startForeground()");
-        } catch (Throwable x) {
-            NotificationManager notificationManager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(Constants.NOTIFICATION_ID_PLAYING, notification);
-            Log.i(TAG, "Service.startForeground() not available. Using work-around.");
-        }
-    }
-
-    private static void stopForeground(Service service, boolean removeNotification) {
-        // Service.stopForeground() was introduced in Android 2.0.
-        // Use reflection to maintain compatibility with 1.5.
-        try {
-            Method method = Service.class.getMethod("stopForeground", boolean.class);
-            method.invoke(service, removeNotification);
-            Log.i(TAG, "Successfully invoked Service.stopForeground()");
-        } catch (Throwable x) {
-            NotificationManager notificationManager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(Constants.NOTIFICATION_ID_PLAYING);
-            Log.i(TAG, "Service.stopForeground() not available. Using work-around.");
         }
     }
 

@@ -20,7 +20,7 @@ package net.sourceforge.subsonic.androidapp.util;
 
 /**
  * @author Sindre Mehus
- * @version $Id: Constants.java 3255 2012-10-12 13:43:32Z sindre_mehus $
+ * @version $Id: Constants.java 3270 2012-10-24 08:56:12Z sindre_mehus $
  */
 public final class Constants {
 
@@ -35,6 +35,8 @@ public final class Constants {
     // Names for intent extras.
     public static final String INTENT_EXTRA_NAME_ID = "subsonic.id";
     public static final String INTENT_EXTRA_NAME_NAME = "subsonic.name";
+    public static final String INTENT_EXTRA_NAME_PARENT_ID = "subsonic.parent.id";
+    public static final String INTENT_EXTRA_NAME_PARENT_NAME = "subsonic.parent.name";
     public static final String INTENT_EXTRA_NAME_ARTIST = "subsonic.artist";
     public static final String INTENT_EXTRA_NAME_TITLE = "subsonic.title";
     public static final String INTENT_EXTRA_NAME_AUTOPLAY = "subsonic.playall";
@@ -72,6 +74,7 @@ public final class Constants {
     public static final String PREFERENCES_KEY_SCROBBLE = "scrobble";
     public static final String PREFERENCES_KEY_REPEAT_MODE = "repeatMode";
     public static final String PREFERENCES_KEY_WIFI_REQUIRED_FOR_DOWNLOAD = "wifiRequiredForDownload";
+    public static final String PREFERENCES_KEY_OFFLINE = "offline";
 
     // Name of the preferences file.
     public static final String PREFERENCES_FILE_NAME = "net.sourceforge.subsonic.androidapp_preferences";
