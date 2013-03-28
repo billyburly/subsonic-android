@@ -717,11 +717,21 @@ public final class Util {
      */
     public static void broadcastNewTrackInfo(Context context, MusicDirectory.Entry song) {
         Intent intent = new Intent(EVENT_META_CHANGED);
+	Intent i = new Intent("com.android.music.metachanged");
+	//Intent i = new Intent("com.samsung.music.metachanged"); //this intent might have more available info on samsung devices
 
         if (song != null) {
             intent.putExtra("title", song.getTitle());
             intent.putExtra("artist", song.getArtist());
             intent.putExtra("album", song.getAlbum());
+
+	    //avrcp intent
+	    i.putExtra("id", song.getId());
+	    i.putExtra("track", song.getTitle());
+            i.putExtra("artist", song.getArtist());
+            i.putExtra("album", song.getAlbum());
+	    i.putExtra("trackLength", song.getDuration());
+	    //additional fields available: playing, playerState, mediaCount, listpos, position, 
 
             File albumArtFile = FileUtil.getAlbumArtFile(context, song);
             intent.putExtra("coverart", albumArtFile.getAbsolutePath());
@@ -730,7 +740,15 @@ public final class Util {
             intent.putExtra("artist", "");
             intent.putExtra("album", "");
             intent.putExtra("coverart", "");
+
+	    i.putExtra("id", "");
+	    i.putExtra("track", "");
+            i.putExtra("artist", "");
+            i.putExtra("album", "");
+	    i.putExtra("trackLength", "");
         }
+
+	context.sendBroadcast(i);
 
         context.sendBroadcast(intent);
     }
@@ -740,24 +758,31 @@ public final class Util {
      */
     public static void broadcastPlaybackStatusChange(Context context, PlayerState state) {
         Intent intent = new Intent(EVENT_PLAYSTATE_CHANGED);
+	Intent i = new Intent("com.android.music.playstatechanged");
+	//Intent i = new Intent("com.samsung.music.playstatechanged");
 
         switch (state) {
             case STARTED:
                 intent.putExtra("state", "play");
+		i.putExtra("state", "play");
                 break;
             case STOPPED:
                 intent.putExtra("state", "stop");
+		i.putExtra("state", "stop");
                 break;
             case PAUSED:
                 intent.putExtra("state", "pause");
+		i.putExtra("state", "pause");
                 break;
             case COMPLETED:
                 intent.putExtra("state", "complete");
+		i.putExtra("state", "complete");
                 break;
             default:
                 return; // No need to broadcast.
         }
 
+	context.sendBroadcast(i);
         context.sendBroadcast(intent);
     }
 
